@@ -15,11 +15,13 @@ namespace CodeHero.Services
         private const string PublicKey = "ba5eb31ac2810f2abbfaf38d3da56685";
         private const string PrivateKey = "c36656854a60d5b233225b19e1d208133928234d";
 
-        public async Task<List<Hero>> GetHeroes()
+        public async Task<List<Hero>> GetHeroes(int offset)
         {
-            string timeStamp = DateTime.Now.Ticks.ToString();
-            string hash = CreateMD5($"{timeStamp}{PrivateKey}{PublicKey}");
-            string url = $"{MarvelAPIUrl}characters?apikey={PublicKey}&ts={timeStamp}&hash={hash}&limit=4&offset=4";
+            var timeStamp = DateTime.Now.Ticks.ToString();            
+            var hash = CreateMD5($"{timeStamp}{PrivateKey}{PublicKey}");
+
+            offset += 4;
+            var url = $"{MarvelAPIUrl}characters?apikey={PublicKey}&ts={timeStamp}&hash={hash}&limit=4&offset={offset}";
 
             using (var client = new HttpClient())
             {
@@ -27,7 +29,7 @@ namespace CodeHero.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string content = await response.Content.ReadAsStringAsync();
+                    var content = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<MarvelResponseModel>(content);
 
                     return result.Data.Results;

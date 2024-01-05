@@ -2,57 +2,66 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CodeHero.Views.HeroesPage">
+
     <ContentPage.Content>
-        <Grid RowDefinitions="*, 4*, 0.5*" BackgroundColor="White">
+        <Grid RowDefinitions="*, 3*, 0.5*" BackgroundColor="White">
             <StackLayout BackgroundColor="White" Margin="30,12">
-                <Label TextColor="#D42026" FontSize="16">
+                <Label TextColor="#D42026" FontSize="16" FontFamily="Roboto">
                     <Label.FormattedText>
                         <FormattedString>
-                            <Span Text="BUSCA MARVEL " FontFamily="Roboto" FontAttributes="Bold"/>
-                            <Span Text="TESTE FRONT-END" FontFamily="Roboto"/>
+                            <Span Text="BUSCA MARVEL "  FontAttributes="Bold"/>
+                            <Span Text="TESTE FRONT-END" />
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
                 <Grid>
                     <BoxView Color="#D42026" HeightRequest="3" HorizontalOptions="StartAndExpand" WidthRequest="47" />
                 </Grid>
-                <Label Text="Nome do Personagem" TextColor="#D42026" FontSize="16" Margin="0,12,0,0"/>
+                <Label Text="Nome do Personagem" TextColor="#D42026" FontAttributes="Bold" FontSize="16" Margin="0,12,0,0"/>
                 <Grid>
-                    <Frame  BackgroundColor="Transparent" HeightRequest="2" BorderColor="Gray"/>
+                    <Frame BackgroundColor="Transparent" HeightRequest="2" BorderColor="Gray"/>
                     <SearchBar MaxLength="25"/>
                 </Grid>
-               
+
             </StackLayout>
 
-            <StackLayout Grid.Row="1" VerticalOptions="Fill" BackgroundColor="#D42026">
-                <CollectionView ItemsSource="{Binding HeroesList}"  BackgroundColor="#D42026">
-                    <CollectionView.Header>
-                        <Label Text="Nome"
+            <ListView Grid.Row="1" ItemsSource="{Binding HeroesList}"  BackgroundColor="#D42026" HasUnevenRows="True" >
+
+                <ListView.Header>
+                    <Label Text="Nome"
                                TextColor="White"
                                Padding="20,12"
                                FontSize="18"
                                HorizontalTextAlignment="Center"/>
-                    </CollectionView.Header>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <StackLayout Margin="0,1">
-                                <Frame HeightRequest="80" BackgroundColor="Green">
-                                    <StackLayout Orientation="Horizontal" HeightRequest="150" WidthRequest="150" BackgroundColor="Gray">
+                </ListView.Header>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell >
+                            <StackLayout Margin="0,1" >
+                                <Frame BackgroundColor="White" >
+                                    <StackLayout Orientation="Horizontal">
                                         <Frame CornerRadius="30" WidthRequest="60" HeightRequest="60" Padding="0" BackgroundColor="Transparent">
                                             <Image Source="{Binding Picture}" Aspect="AspectFill" />
                                         </Frame>
-                                        <Label Text="{Binding Name}" TextColor="Black" VerticalOptions="Center" Margin="10,0,0,0" />
+                                        <Label Text="{Binding Name}" 
+                                               TextColor="Black" 
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               FontFamily="Roboto"
+                                               VerticalOptions="Center" 
+                                               Margin="10,0,0,0" />
                                     </StackLayout>
                                 </Frame>
                             </StackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </StackLayout>
-
-            <StackLayout Grid.Row="2" BackgroundColor="Blue">
-                
-            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid Grid.Row="2" ColumnDefinitions="*,*" BackgroundColor="White">
+                <Button Text="Back" Command="{Binding BackCommand}"/>
+                <Button Grid.Column="1" Text="Load" Command="{Binding LoadMoreCommand}"/>
+            </Grid>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
