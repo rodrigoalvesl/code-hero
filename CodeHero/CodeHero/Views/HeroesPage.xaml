@@ -5,15 +5,14 @@
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="CodeHero.Views.HeroesPage">
 
-
     <ContentPage.Resources>
         <ResourceDictionary>
+
             <Style TargetType="controls:SkeletonView">
                 <Setter Property="BackgroundColor" Value="#E4E4E4"/>
                 <Setter Property="CornerRadius" Value="4" />
                 <Setter Property="HorizontalOptions" Value="Start" />
             </Style>
-
 
             <DataTemplate x:Key="LoadingTemplate">
                 <Grid ColumnDefinitions="Auto, *"
@@ -42,7 +41,6 @@
                                            HeightRequest="16"
                                            Margin="12,10,0,0"
                                            WidthRequest="150"/>
-
                 </Grid>
             </DataTemplate>
         </ResourceDictionary>
@@ -50,24 +48,23 @@
 
     <ContentPage.Content>
 
-
         <Grid RowDefinitions="*, 3*, 0.5*" BackgroundColor="White">
             <StackLayout BackgroundColor="White" Margin="30,12">
                 <Label TextColor="#D42026" FontSize="16" FontFamily="Roboto">
                     <Label.FormattedText>
                         <FormattedString>
-                            <Span Text="BUSCA MARVEL "  FontAttributes="Bold"/>
+                            <Span Text="BUSCA MARVEL " FontSize="16" FontAttributes="Bold"/>
                             <Span Text="TESTE FRONT-END" />
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
                 <Grid>
-                    <BoxView Color="#D42026" HeightRequest="3" HorizontalOptions="StartAndExpand" WidthRequest="47" />
+                    <BoxView Color="#D42026" HeightRequest="3" HorizontalOptions="StartAndExpand" WidthRequest="50" />
                 </Grid>
                 <Label Text="Nome do Personagem" TextColor="#D42026" FontAttributes="Bold" FontSize="16" Margin="0,12,0,0"/>
                 <Grid>
                     <Frame BackgroundColor="Transparent" HeightRequest="2" BorderColor="Gray"/>
-                    <SearchBar MaxLength="25"/>
+                    <SearchBar Text="{Binding HeroName}" SearchCommand="{Binding SearchCommand}" MaxLength="30"/>
                 </Grid>
             </StackLayout>
 
@@ -76,18 +73,23 @@
                     <xct:StateView Template="{StaticResource LoadingTemplate}" VerticalOptions="EndAndExpand" StateKey="Loading" RepeatCount="4" />
                 </xct:StateLayout.StateViews>
 
-                <ListView Grid.Row="1" ItemsSource="{Binding HeroesList}" BackgroundColor="#D42026" HasUnevenRows="True" >
-                    <ListView.Header>
+                <CollectionView Grid.Row="1"
+                                ItemsSource="{Binding HeroesList}"
+                                SelectionMode="Single"
+                                SelectedItem="{Binding SelectedHero}"
+                                SelectionChangedCommand="{Binding SelectedHeroCommand}"
+                                BackgroundColor="#D42026">
+
+                    <CollectionView.Header>
                         <Label Text="Nome"
                            TextColor="White"
                            Padding="0,6"    
                            FontSize="18"
                            HorizontalTextAlignment="Center"/>
-                    </ListView.Header>
+                    </CollectionView.Header>
 
-                    <ListView.ItemTemplate>
+                    <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <ViewCell >
                                 <StackLayout Margin="0,1" >
                                     <Frame BackgroundColor="White" >
                                         <StackLayout Orientation="Horizontal">
@@ -104,10 +106,9 @@
                                         </StackLayout>
                                     </Frame>
                                 </StackLayout>
-                            </ViewCell>
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </StackLayout>
             <Grid Grid.Row="2" ColumnDefinitions="2*,*,2*" BackgroundColor="White">
                 <Button Text="Back" Command="{Binding BackCommand}" IsEnabled="{Binding IsBackEnabled}"/>

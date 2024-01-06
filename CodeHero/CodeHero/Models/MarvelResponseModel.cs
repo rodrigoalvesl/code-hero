@@ -14,11 +14,21 @@ namespace CodeHero.Models
 
     public class Hero
     {
-        public string Name { get; set; }
         public int Id { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public Thumbnail thumbnail { get; set; }
-        public string Picture => $"{thumbnail.Path}.{thumbnail.Extension}";
+        public string Picture
+        {
+            get
+            {
+                if (thumbnail != null)
+                {
+                    return $"{thumbnail.Path}.{thumbnail.Extension}";
+                }
+                return string.Empty;
+            }
+        }
     }
     public class Thumbnail
     {

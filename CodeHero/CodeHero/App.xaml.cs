@@ -11,7 +11,7 @@ namespace CodeHero
         {
             InitializeComponent();
 
-            MainPage = new HeroesPage();
+            MainPage = new NavigationPage(new HeroesPage());
         }
 
         protected override void OnStart()

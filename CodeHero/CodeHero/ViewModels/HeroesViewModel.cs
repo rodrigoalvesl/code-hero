@@ -1,6 +1,9 @@
 ﻿using CodeHero.Models;
 using CodeHero.Services;
+using CodeHero.Views;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.CommunityToolkit.UI.Views;
@@ -22,8 +25,33 @@ namespace CodeHero.ViewModels
             set
             {
                 _currentPage = value;
-                OnPropertyChanged(nameof(CurrentPage));
+                OnPropertyChanged("CurrentPage");
                 UpdateBackButtonVisibility();
+            }
+        }
+
+        private string _heroName;
+        public string HeroName
+        {
+            get => _heroName;
+            set
+            {
+                _heroName = value;
+                OnPropertyChanged("HeroName");
+
+                if (string.IsNullOrEmpty(_heroName))
+                    Task.Run(async () => await RetrieveHeroesListAsync());
+            }
+        }
+
+        Hero _selectedHero;
+        public Hero SelectedHero
+        {
+            get => _selectedHero;
+            set
+            {
+                _selectedHero = value;
+                OnPropertyChanged("SelectedHero");
             }
         }
 
@@ -56,6 +84,8 @@ namespace CodeHero.ViewModels
         #region Commands
         public ICommand LoadMoreCommand => new Command(async () => await LoadMoreHeroesAsync());
         public ICommand BackCommand => new Command(async () => await GoBackAsync());
+        public ICommand SearchCommand => new Command(async () => await SearchHeroAsync());
+        public ICommand SelectedHeroCommand => new Command(async () => await GoToHeroDetailsAsync());
         #endregion
 
         public HeroesViewModel()
@@ -66,30 +96,40 @@ namespace CodeHero.ViewModels
 
             Task.Run(async () => await RetrieveHeroesListAsync());
         }
-
         private async Task LoadMoreHeroesAsync()
         {
             CurrentPage++;
             await RetrieveHeroesListAsync();
         }
-
         private async Task GoBackAsync()
         {
             CurrentPage--;
             await RetrieveHeroesListAsync();
         }
-
-        private async Task RetrieveHeroesListAsync()
+        private async Task SearchHeroAsync()
         {
             CurrentState = LayoutState.Loading;
-            var list = await Service.GetHeroes(CurrentPage);
+            var list = await Service.GetHeroByNameAsync(HeroName);
             HeroesList = list;
             CurrentState = LayoutState.None;
         }
-
+        private async Task GoToHeroDetailsAsync()
+        {
+            if (SelectedHero != null)
+            {                
+                await Application.Current.MainPage.Navigation.PushAsync(new HeroDetailsPage(SelectedHero));
+            }
+        }
+        private async Task RetrieveHeroesListAsync()
+        {
+            CurrentState = LayoutState.Loading;
+            var list = await Service.GetHeroesAsync(CurrentPage);
+            HeroesList = list;
+            CurrentState = LayoutState.None;
+        }
         private void UpdateBackButtonVisibility()
         {
             OnPropertyChanged("IsBackEnabled");
-        }            
+        }
     }
 }
