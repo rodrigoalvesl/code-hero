@@ -1,29 +1,29 @@
 ﻿using CodeHero.Models;
 using CodeHero.Services;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.CommunityToolkit.UI.Views;
 using Xamarin.Forms;
 
 namespace CodeHero.ViewModels
 {
     public class HeroesViewModel : BaseViewModel
     {
-        #region Proprerties
+        #region Properties
         public MarvelService Service { get; set; }
-        public ICommand LoadMoreCommand => new Command(async () => await LoadMoreAsync());
+        public bool IsBackEnabled => CurrentPage != 0;
 
-        public ICommand BackCommand => new Command(async () => await BackAsync());
 
-        int _offset;
-        public int Offset
+        private int _currentPage;
+        public int CurrentPage
         {
-            get => _offset;
+            get => _currentPage;
             set
             {
-                _offset = value;
-                OnPropertyChanged("Offset");
+                _currentPage = value;
+                OnPropertyChanged(nameof(CurrentPage));
+                UpdateBackButtonVisibility();
             }
         }
 
@@ -37,33 +37,59 @@ namespace CodeHero.ViewModels
                 OnPropertyChanged("HeroesList");
             }
         }
+
+        LayoutState _currentState = LayoutState.Loading;
+        public LayoutState CurrentState
+        {
+            get => _currentState;
+            set
+            {
+                if (_currentState != value)
+                {
+                    _currentState = value;
+                    OnPropertyChanged("CurrentState");
+                }
+            }
+        }
+        #endregion
+
+        #region Commands
+        public ICommand LoadMoreCommand => new Command(async () => await LoadMoreHeroesAsync());
+        public ICommand BackCommand => new Command(async () => await GoBackAsync());
         #endregion
 
         public HeroesViewModel()
         {
             Service = new MarvelService();
             HeroesList = new List<Hero>();
-            Offset = 0;
+            CurrentPage = 0;
 
-            Task.Run(async () => await RetrieveHeroesList());
+            Task.Run(async () => await RetrieveHeroesListAsync());
         }
 
-        private async Task LoadMoreAsync()
+        private async Task LoadMoreHeroesAsync()
         {
-            Offset++;
-            await RetrieveHeroesList();
+            CurrentPage++;
+            await RetrieveHeroesListAsync();
         }
 
-        private async Task BackAsync()
+        private async Task GoBackAsync()
         {
-            Offset--;
-            await RetrieveHeroesList();
+            CurrentPage--;
+            await RetrieveHeroesListAsync();
         }
 
-        private async Task RetrieveHeroesList()
+        private async Task RetrieveHeroesListAsync()
         {
-            var list = await Service.GetHeroes(Offset);
+            CurrentState = LayoutState.Loading;
+            var list = await Service.GetHeroes(CurrentPage);
             HeroesList = list;
+            CurrentState = LayoutState.None;
         }
+
+        private void UpdateBackButtonVisibility()
+        {
+            OnPropertyChanged("IsBackEnabled");
+        }            
     }
 }

@@ -1,67 +1,126 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:CodeHero.Controls"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="CodeHero.Views.HeroesPage">
 
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="controls:SkeletonView">
+                <Setter Property="BackgroundColor" Value="#E4E4E4"/>
+                <Setter Property="CornerRadius" Value="4" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+
+
+            <DataTemplate x:Key="LoadingTemplate">
+                <Grid ColumnDefinitions="Auto, *"
+                      RowDefinitions="Auto, Auto"
+                      Padding="0,10" >
+
+                    <controls:SkeletonView Grid.Column="0"
+                                                   Grid.Row="0"
+                                                   Grid.RowSpan="3"
+                                                   Margin="20,0,0,10"
+                                                   HeightRequest="70"
+                                                   WidthRequest="70"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center">
+                        <controls:SkeletonView.Clip>
+                            <EllipseGeometry
+                                                Center="35,35"
+                                                RadiusX="35"
+                                                RadiusY="35"/>
+                        </controls:SkeletonView.Clip>
+
+                    </controls:SkeletonView>
+
+                    <controls:SkeletonView Grid.Column="1"
+                                           Grid.Row="1"
+                                           HeightRequest="16"
+                                           Margin="12,10,0,0"
+                                           WidthRequest="150"/>
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ContentPage.Content>
-        <Grid RowDefinitions="*, 3*, 0.5*" BackgroundColor="White">
-            <StackLayout BackgroundColor="White" Margin="30,12">
-                <Label TextColor="#D42026" FontSize="16" FontFamily="Roboto">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="BUSCA MARVEL "  FontAttributes="Bold"/>
-                            <Span Text="TESTE FRONT-END" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Grid>
-                    <BoxView Color="#D42026" HeightRequest="3" HorizontalOptions="StartAndExpand" WidthRequest="47" />
-                </Grid>
-                <Label Text="Nome do Personagem" TextColor="#D42026" FontAttributes="Bold" FontSize="16" Margin="0,12,0,0"/>
-                <Grid>
-                    <Frame BackgroundColor="Transparent" HeightRequest="2" BorderColor="Gray"/>
-                    <SearchBar MaxLength="25"/>
-                </Grid>
 
-            </StackLayout>
+        <StackLayout xct:StateLayout.CurrentState="{Binding CurrentState}"
+                 xct:StateLayout.AnimateStateChanges="False">
+            <xct:StateLayout.StateViews>
+                <xct:StateView StateKey="Loading"
+                               VerticalOptions="EndAndExpand"
+                            RepeatCount="4"
+                            Template="{StaticResource LoadingTemplate}">
+                </xct:StateView>
+            </xct:StateLayout.StateViews>
 
-            <ListView Grid.Row="1" ItemsSource="{Binding HeroesList}"  BackgroundColor="#D42026" HasUnevenRows="True" >
+            <Grid RowDefinitions="*, 3*, 0.5*" BackgroundColor="White">
+                <StackLayout BackgroundColor="White" Margin="30,12">
+                    <Label TextColor="#D42026" FontSize="16" FontFamily="Roboto">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="BUSCA MARVEL "  FontAttributes="Bold"/>
+                                <Span Text="TESTE FRONT-END" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Grid>
+                        <BoxView Color="#D42026" HeightRequest="3" HorizontalOptions="StartAndExpand" WidthRequest="47" />
+                    </Grid>
+                    <Label Text="Nome do Personagem" TextColor="#D42026" FontAttributes="Bold" FontSize="16" Margin="0,12,0,0"/>
+                    <Grid>
+                        <Frame BackgroundColor="Transparent" HeightRequest="2" BorderColor="Gray"/>
+                        <SearchBar MaxLength="25"/>
+                    </Grid>
 
-                <ListView.Header>
-                    <Label Text="Nome"
-                               TextColor="White"
-                               Padding="20,12"
-                               FontSize="18"
-                               HorizontalTextAlignment="Center"/>
-                </ListView.Header>
+                </StackLayout>
 
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell >
-                            <StackLayout Margin="0,1" >
-                                <Frame BackgroundColor="White" >
-                                    <StackLayout Orientation="Horizontal">
-                                        <Frame CornerRadius="30" WidthRequest="60" HeightRequest="60" Padding="0" BackgroundColor="Transparent">
-                                            <Image Source="{Binding Picture}" Aspect="AspectFill" />
-                                        </Frame>
-                                        <Label Text="{Binding Name}" 
+                <ListView Grid.Row="1" ItemsSource="{Binding HeroesList}"  BackgroundColor="#D42026" HasUnevenRows="True" >
+
+                    <ListView.Header>
+                        <Label Text="Nome"
+                           TextColor="White"
+                           Padding="0,6"    
+                           FontSize="18"
+                           HorizontalTextAlignment="Center"/>
+                    </ListView.Header>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell >
+                                <StackLayout Margin="0,1" >
+                                    <Frame BackgroundColor="White" >
+                                        <StackLayout Orientation="Horizontal">
+                                            <Frame CornerRadius="30" WidthRequest="60" HeightRequest="60" Padding="0" BackgroundColor="Transparent">
+                                                <Image Source="{Binding Picture}" Aspect="AspectFill" />
+                                            </Frame>
+                                            <Label Text="{Binding Name}" 
                                                TextColor="Black" 
                                                FontSize="16"
                                                FontAttributes="Bold"
                                                FontFamily="Roboto"
                                                VerticalOptions="Center" 
                                                Margin="10,0,0,0" />
-                                    </StackLayout>
-                                </Frame>
-                            </StackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Grid Grid.Row="2" ColumnDefinitions="*,*" BackgroundColor="White">
-                <Button Text="Back" Command="{Binding BackCommand}"/>
-                <Button Grid.Column="1" Text="Load" Command="{Binding LoadMoreCommand}"/>
+                                        </StackLayout>
+                                    </Frame>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Grid Grid.Row="2" ColumnDefinitions="2*,*,2*" BackgroundColor="White">
+                    <Button Text="Back" Command="{Binding BackCommand}" IsEnabled="{Binding IsBackEnabled}"/>
+                    <Frame Grid.Column="1" HeightRequest="20" WidthRequest="20" CornerRadius="10" BackgroundColor="Transparent" BorderColor="Black">
+                        <Label Grid.Column="1" Text="1" FontSize="18" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                    </Frame>
+                    <Button Grid.Column="2" Text="Load" Command="{Binding LoadMoreCommand}"/>
+                </Grid>
             </Grid>
-        </Grid>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>
