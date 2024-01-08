@@ -4,6 +4,8 @@
              x:Class="CodeHero.App">
     <Application.Resources>
         <ResourceDictionary>
+            <Color x:Key="MarvelRed">#D42026</Color>
+
             <Style TargetType="NavigationPage">
                 <Setter Property="BarBackgroundColor" Value="#D42026" />
                 <Setter Property="BarTextColor" Value="White" />

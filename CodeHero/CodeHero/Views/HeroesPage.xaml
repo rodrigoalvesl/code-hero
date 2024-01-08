@@ -7,13 +7,11 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-
             <Style TargetType="controls:SkeletonView">
                 <Setter Property="BackgroundColor" Value="#E4E4E4"/>
                 <Setter Property="CornerRadius" Value="4" />
                 <Setter Property="HorizontalOptions" Value="Start" />
             </Style>
-
             <DataTemplate x:Key="LoadingTemplate">
                 <Grid ColumnDefinitions="Auto, *"
                       RowDefinitions="Auto, Auto"
@@ -45,12 +43,11 @@
             </DataTemplate>
         </ResourceDictionary>
     </ContentPage.Resources>
-
     <ContentPage.Content>
 
-        <Grid RowDefinitions="*, 3*, 0.5*" BackgroundColor="White">
-            <StackLayout BackgroundColor="White" Margin="30,12">
-                <Label TextColor="#D42026" FontSize="16" FontFamily="Roboto">
+        <Grid RowDefinitions="*, Auto, 3*, 0.5*" BackgroundColor="White">
+            <StackLayout Grid.Row="0" BackgroundColor="White" Margin="30,12">
+                <Label TextColor="{StaticResource MarvelRed}" FontSize="16" FontFamily="Roboto">
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="BUSCA MARVEL " FontSize="16" FontAttributes="Bold"/>
@@ -59,33 +56,33 @@
                     </Label.FormattedText>
                 </Label>
                 <Grid>
-                    <BoxView Color="#D42026" HeightRequest="3" HorizontalOptions="StartAndExpand" WidthRequest="50" />
+                    <BoxView Color="{StaticResource MarvelRed}" HeightRequest="3" HorizontalOptions="StartAndExpand" WidthRequest="50" />
                 </Grid>
-                <Label Text="Nome do Personagem" TextColor="#D42026" FontSize="16" Margin="0,12,0,0"/>
+                <Label Text="Nome do Personagem" TextColor="{StaticResource MarvelRed}" FontSize="16" Margin="0,12,0,0"/>
                 <Grid>
                     <Frame BackgroundColor="Transparent" HeightRequest="2" BorderColor="Gray"/>
-                    <SearchBar Text="{Binding HeroSearchName}"  SearchCommand="{Binding SearchCommand}" MaxLength="30"/>
+                    <SearchBar Text="{Binding HeroSearchName}" TextColor="Black" SearchCommand="{Binding SearchCommand}" MaxLength="30"/>
                 </Grid>
             </StackLayout>
-
-            <StackLayout Grid.Row="1" xct:StateLayout.CurrentState="{Binding CurrentState}" xct:StateLayout.AnimateStateChanges="False">
+            <StackLayout Grid.Row="1" BackgroundColor="{StaticResource MarvelRed}">
+                <Label Text="Nome"
+                       TextColor="White"
+                       Margin="0,12,100,12"
+                       FontSize="18"
+                       HorizontalTextAlignment="Center"/>
+            </StackLayout>
+            <StackLayout Grid.Row="2" xct:StateLayout.CurrentState="{Binding CurrentState}" xct:StateLayout.AnimateStateChanges="False">
                 <xct:StateLayout.StateViews>
                     <xct:StateView Template="{StaticResource LoadingTemplate}" VerticalOptions="EndAndExpand" StateKey="Loading" RepeatCount="4" />
                 </xct:StateLayout.StateViews>
+
+
                 <CollectionView Grid.Row="1"
                                 ItemsSource="{Binding HeroesList}"
                                 SelectionMode="Single"
                                 SelectedItem="{Binding SelectedHero}"                                
                                 SelectionChangedCommand="{Binding SelectedHeroCommand}"
-                                BackgroundColor="#D42026">
-
-                    <CollectionView.Header>
-                        <Label Text="Nome"
-                           TextColor="White"
-                           Padding="0,6"    
-                           FontSize="18"
-                           HorizontalTextAlignment="Center"/>
-                    </CollectionView.Header>
+                                BackgroundColor="{StaticResource MarvelRed}">
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
@@ -106,25 +103,43 @@
                             </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
+
+                    <CollectionView.EmptyView>
+                        <StackLayout BackgroundColor="{StaticResource MarvelRed}">
+                            <Label FontFamily="Roboto"
+                                   VerticalOptions="CenterAndExpand"
+                                   VerticalTextAlignment="Center"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="White" 
+                                   FontSize="16">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Não foi encontrado nenhum personagem. &#x0a; "/>
+                                        <Span Text="Tente novamente, buscando pelo nome completo" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </StackLayout>
+                    </CollectionView.EmptyView>
+
                 </CollectionView>
             </StackLayout>
 
-            <Grid Grid.Row="2" ColumnDefinitions="*,2*,*" BackgroundColor="White">
+            <Grid Grid.Row="3" ColumnDefinitions="*,2*,*" Padding="5" BackgroundColor="White">
                 <ImageButton Source="back.png" BackgroundColor="Transparent" Command="{Binding BackCommand}" IsEnabled="{Binding IsBackEnabled}"/>
                 <Grid Grid.Column="1" HorizontalOptions="CenterAndExpand" ColumnDefinitions="Auto, Auto, Auto">
                     <BoxView Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" HeightRequest="40" WidthRequest="40" CornerRadius="20" IsVisible="{Binding IsBackEnabled}"/>
-                    <Label Grid.Column="0" Text="{Binding PreviousPage}" TextColor="#D42026" FontSize="18" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" IsVisible="{Binding IsBackEnabled}"/>
+                    <Label Grid.Column="0" Text="{Binding PreviousPage}" TextColor="{StaticResource MarvelRed}" FontSize="18" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" IsVisible="{Binding IsBackEnabled}"/>
 
                     <BoxView Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" HeightRequest="40" WidthRequest="40" CornerRadius="20" BackgroundColor="#D42026"/>
                     <Label Grid.Column="1" Text="{Binding CurrentPage}" FontSize="18" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
 
                     <BoxView Grid.Column="2" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" HeightRequest="40" WidthRequest="40" CornerRadius="20" />
-                    <Label Grid.Column="2" Text="{Binding NextPage}" FontSize="18" TextColor="#D42026" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                    <Label Grid.Column="2" Text="{Binding NextPage}" FontSize="18" TextColor="{StaticResource MarvelRed}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
 
                 </Grid>
                 <ImageButton Grid.Column="2" BackgroundColor="Transparent" Source="next.png" Command="{Binding LoadMoreCommand}"/>
             </Grid>
-
         </Grid>
     </ContentPage.Content>
 </ContentPage>
