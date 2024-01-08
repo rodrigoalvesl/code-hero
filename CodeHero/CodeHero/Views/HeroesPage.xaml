@@ -61,10 +61,10 @@
                 <Grid>
                     <BoxView Color="#D42026" HeightRequest="3" HorizontalOptions="StartAndExpand" WidthRequest="50" />
                 </Grid>
-                <Label Text="Nome do Personagem" TextColor="#D42026" FontAttributes="Bold" FontSize="16" Margin="0,12,0,0"/>
+                <Label Text="Nome do Personagem" TextColor="#D42026" FontSize="16" Margin="0,12,0,0"/>
                 <Grid>
                     <Frame BackgroundColor="Transparent" HeightRequest="2" BorderColor="Gray"/>
-                    <SearchBar Text="{Binding HeroName}" SearchCommand="{Binding SearchCommand}" MaxLength="30"/>
+                    <SearchBar Text="{Binding HeroSearchName}"  SearchCommand="{Binding SearchCommand}" MaxLength="30"/>
                 </Grid>
             </StackLayout>
 
@@ -72,11 +72,10 @@
                 <xct:StateLayout.StateViews>
                     <xct:StateView Template="{StaticResource LoadingTemplate}" VerticalOptions="EndAndExpand" StateKey="Loading" RepeatCount="4" />
                 </xct:StateLayout.StateViews>
-
                 <CollectionView Grid.Row="1"
                                 ItemsSource="{Binding HeroesList}"
                                 SelectionMode="Single"
-                                SelectedItem="{Binding SelectedHero}"
+                                SelectedItem="{Binding SelectedHero}"                                
                                 SelectionChangedCommand="{Binding SelectedHeroCommand}"
                                 BackgroundColor="#D42026">
 
@@ -90,33 +89,42 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                                <StackLayout Margin="0,1" >
-                                    <Frame BackgroundColor="White" >
-                                        <StackLayout Orientation="Horizontal">
-                                            <Frame CornerRadius="30" WidthRequest="60" HeightRequest="60" Padding="0" BackgroundColor="Transparent">
-                                                <Image Source="{Binding Picture}" Aspect="AspectFill" />
-                                            </Frame>
-                                            <Label Text="{Binding Name}" 
+                            <StackLayout Margin="0,1" >
+                                <Frame BackgroundColor="White" >
+                                    <StackLayout Orientation="Horizontal">
+                                        <Frame CornerRadius="30" WidthRequest="60" HeightRequest="60" Padding="0" BackgroundColor="Transparent">
+                                            <Image Source="{Binding Picture}" Aspect="AspectFill" />
+                                        </Frame>
+                                        <Label Text="{Binding Name}" 
                                                TextColor="Black" 
                                                FontSize="16"
-                                               FontAttributes="Bold"
                                                FontFamily="Roboto"
                                                VerticalOptions="Center" 
                                                Margin="10,0,0,0" />
-                                        </StackLayout>
-                                    </Frame>
-                                </StackLayout>
+                                    </StackLayout>
+                                </Frame>
+                            </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </StackLayout>
-            <Grid Grid.Row="2" ColumnDefinitions="2*,*,2*" BackgroundColor="White">
-                <Button Text="Back" Command="{Binding BackCommand}" IsEnabled="{Binding IsBackEnabled}"/>
-                <Frame Grid.Column="1" HeightRequest="20" WidthRequest="20" CornerRadius="10" BackgroundColor="Transparent" BorderColor="Black">
-                    <Label Grid.Column="1" Text="1" FontSize="18" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
-                </Frame>
-                <Button Grid.Column="2" Text="Load" Command="{Binding LoadMoreCommand}"/>
+
+            <Grid Grid.Row="2" ColumnDefinitions="*,2*,*" BackgroundColor="White">
+                <ImageButton Source="back.png" BackgroundColor="Transparent" Command="{Binding BackCommand}" IsEnabled="{Binding IsBackEnabled}"/>
+                <Grid Grid.Column="1" HorizontalOptions="CenterAndExpand" ColumnDefinitions="Auto, Auto, Auto">
+                    <BoxView Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" HeightRequest="40" WidthRequest="40" CornerRadius="20" IsVisible="{Binding IsBackEnabled}"/>
+                    <Label Grid.Column="0" Text="{Binding PreviousPage}" TextColor="#D42026" FontSize="18" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" IsVisible="{Binding IsBackEnabled}"/>
+
+                    <BoxView Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" HeightRequest="40" WidthRequest="40" CornerRadius="20" BackgroundColor="#D42026"/>
+                    <Label Grid.Column="1" Text="{Binding CurrentPage}" FontSize="18" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+
+                    <BoxView Grid.Column="2" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" HeightRequest="40" WidthRequest="40" CornerRadius="20" />
+                    <Label Grid.Column="2" Text="{Binding NextPage}" FontSize="18" TextColor="#D42026" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+
+                </Grid>
+                <ImageButton Grid.Column="2" BackgroundColor="Transparent" Source="next.png" Command="{Binding LoadMoreCommand}"/>
             </Grid>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

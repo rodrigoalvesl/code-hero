@@ -1,9 +1,7 @@
 ﻿using CodeHero.Models;
 using CodeHero.Services;
 using CodeHero.Views;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.CommunityToolkit.UI.Views;
@@ -15,7 +13,40 @@ namespace CodeHero.ViewModels
     {
         #region Properties
         public MarvelService Service { get; set; }
-        public bool IsBackEnabled => CurrentPage != 0;
+        public bool IsBackEnabled => CurrentPage != 1;
+
+        private bool _isNavigable = true;
+        public bool IsNavigable
+        {
+            get => _isNavigable;
+            set
+            {
+                _isNavigable = value;
+                OnPropertyChanged("IsNavigable");
+            }
+        }
+
+        private int _nextPage;
+        public int NextPage
+        {
+            get => _nextPage;
+            set
+            {
+                _nextPage = value;
+                OnPropertyChanged("NextPage");
+            }
+        }
+
+        private int _previousPage;
+        public int PreviousPage
+        {
+            get => _previousPage;
+            set
+            {
+                _previousPage = value;
+                OnPropertyChanged("PreviousPage");
+            }
+        }
 
 
         private int _currentPage;
@@ -27,19 +58,21 @@ namespace CodeHero.ViewModels
                 _currentPage = value;
                 OnPropertyChanged("CurrentPage");
                 UpdateBackButtonVisibility();
+                NextPage = _currentPage + 1;
+                PreviousPage = _currentPage - 1;
             }
         }
 
-        private string _heroName;
-        public string HeroName
+        private string _heroSearchName;
+        public string HeroSearchName
         {
-            get => _heroName;
+            get => _heroSearchName;
             set
             {
-                _heroName = value;
-                OnPropertyChanged("HeroName");
+                _heroSearchName = value;
+                OnPropertyChanged("HeroSearchName");
 
-                if (string.IsNullOrEmpty(_heroName))
+                if (string.IsNullOrEmpty(_heroSearchName))
                     Task.Run(async () => await RetrieveHeroesListAsync());
             }
         }
@@ -91,42 +124,54 @@ namespace CodeHero.ViewModels
         public HeroesViewModel()
         {
             Service = new MarvelService();
-            HeroesList = new List<Hero>();
-            CurrentPage = 0;
+            CurrentPage = 1;
 
             Task.Run(async () => await RetrieveHeroesListAsync());
         }
+
         private async Task LoadMoreHeroesAsync()
         {
+            HeroSearchName = string.Empty;
+            IsNavigable = false;
             CurrentPage++;
             await RetrieveHeroesListAsync();
         }
+
         private async Task GoBackAsync()
         {
+            HeroSearchName = string.Empty;
+            IsNavigable = false;
             CurrentPage--;
             await RetrieveHeroesListAsync();
         }
+
         private async Task SearchHeroAsync()
         {
-            CurrentState = LayoutState.Loading;
-            var list = await Service.GetHeroByNameAsync(HeroName);
-            HeroesList = list;
+            IsNavigable = false;
+            var list = await Service.GetHeroByNameAsync(HeroSearchName);
+            HeroesList = new List<Hero>(list);
             CurrentState = LayoutState.None;
+            IsNavigable = true;
         }
+
         private async Task GoToHeroDetailsAsync()
         {
-            if (SelectedHero != null)
+            if (SelectedHero != null && IsNavigable)
             {                
                 await Application.Current.MainPage.Navigation.PushAsync(new HeroDetailsPage(SelectedHero));
             }
         }
+
         private async Task RetrieveHeroesListAsync()
         {
+            IsNavigable = false;
             CurrentState = LayoutState.Loading;
-            var list = await Service.GetHeroesAsync(CurrentPage);
-            HeroesList = list;
+            var list = await Service.GetHeroesAsync(CurrentPage);        
+            HeroesList = new List<Hero>(list);
             CurrentState = LayoutState.None;
+            IsNavigable = true;
         }
+
         private void UpdateBackButtonVisibility()
         {
             OnPropertyChanged("IsBackEnabled");

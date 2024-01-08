@@ -16,11 +16,9 @@ namespace CodeHero.ViewModels
         }
         public DetailsViewModel(Hero hero)
         {
-            HeroData = new Hero
-            {
-                Name = hero.Name,
-                Description = hero.Description
-            };               
+            var desc = string.IsNullOrEmpty(hero.Description) ? "Este personagem não tem descrição." : hero.Description;
+            hero.Description = desc;
+            HeroData = hero;
         }
     }
 }
