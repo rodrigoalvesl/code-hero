@@ -86,10 +86,10 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <StackLayout Margin="0,1" >
-                                <Frame BackgroundColor="White" >
+                            <StackLayout Margin="0,1">
+                                <Frame BackgroundColor="White" HeightRequest="80">
                                     <StackLayout Orientation="Horizontal">
-                                        <Frame CornerRadius="30" WidthRequest="60" HeightRequest="60" Padding="0" BackgroundColor="Transparent">
+                                        <Frame CornerRadius="340" WidthRequest="80" HeightRequest="80" Padding="0" BackgroundColor="Transparent">
                                             <Image Source="{Binding Picture}" Aspect="AspectFill" />
                                         </Frame>
                                         <Label Text="{Binding Name}" 
